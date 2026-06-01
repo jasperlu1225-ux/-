@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>城市跑酷</title>
+    <title>城市跑酷 - City Parkour</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #87CEEB;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,247 +21,340 @@
             padding: 10px;
         }
 
-        .container {
+        .game-container {
             width: 100%;
-            max-width: 800px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
-        #gameContainer {
+        .game-header {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #gameCanvas {
             width: 100%;
             height: 600px;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #98FF98 100%);
             position: relative;
             overflow: hidden;
-            touch-action: none;
+            display: block;
         }
 
-        .ui-panel {
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
+        .game-stats {
+            background: #333;
+            color: white;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-around;
-            align-items: center;
             font-size: 18px;
+            font-weight: bold;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .ui-item {
+        .stat-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .button-group {
+        .stat-label {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+
+        .game-controls {
+            background: #444;
+            padding: 15px 20px;
             display: flex;
             gap: 10px;
-            margin-top: 10px;
-            padding: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 16px;
-            background-color: #4CAF50;
+            background: linear-gradient(to right, #4CAF50, #45a049);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
-        .mobile-controls {
+        .mobile-buttons {
             display: none;
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             width: 100%;
             justify-content: space-around;
             padding: 0 20px;
             z-index: 100;
         }
 
-        .mobile-controls.visible {
+        .mobile-buttons.show {
             display: flex;
         }
 
-        .control-btn {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(76, 175, 80, 0.7);
-            border: 3px solid #fff;
+        .mobile-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(76, 175, 80, 0.8);
+            border: 3px solid white;
             border-radius: 50%;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             user-select: none;
-            transition: background-color 0.1s;
+            transition: all 0.1s;
         }
 
-        .control-btn:active {
-            background-color: rgba(76, 175, 80, 1);
+        .mobile-btn:active {
+            background: rgba(76, 175, 80, 1);
+            transform: scale(0.95);
         }
 
-        #gameOver {
+        #gameOverScreen {
             display: none;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
             z-index: 200;
-            min-width: 250px;
+            justify-content: center;
+            align-items: center;
         }
 
-        #gameOver h2 {
-            font-size: 36px;
+        #gameOverScreen.show {
+            display: flex;
+        }
+
+        .game-over-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .game-over-content h2 {
+            font-size: 48px;
+            color: #e74c3c;
             margin-bottom: 20px;
         }
 
-        #gameOver p {
+        .game-over-content p {
             font-size: 20px;
-            margin: 10px 0;
+            color: #333;
+            margin: 15px 0;
         }
 
-        #gameOver button {
+        .game-over-content button {
             margin-top: 20px;
-            font-size: 18px;
-            padding: 15px 30px;
+            background: linear-gradient(to right, #3498db, #2980b9);
         }
 
-        .checkpoint-indicator {
+        .info-panel {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: #FFD700;
-            padding: 10px 15px;
-            border-radius: 5px;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
             font-size: 14px;
             z-index: 50;
         }
 
-        @media (max-width: 600px) {
-            #gameContainer {
+        @media (max-width: 768px) {
+            #gameCanvas {
                 height: 500px;
             }
 
-            .ui-panel {
+            .game-stats {
                 flex-direction: column;
                 gap: 10px;
             }
 
-            .button-group {
+            .stat-item {
+                justify-content: space-between;
                 width: 100%;
-                flex-wrap: wrap;
-            }
-
-            button {
-                flex: 1;
-                min-width: 100px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="gameContainer">
-            <div class="checkpoint-indicator">檢查點: <span id="checkpointCount">0</span></div>
-            <div class="mobile-controls" id="mobileControls">
-                <div class="control-btn" id="leftBtn">←</div>
-                <div class="control-btn" id="jumpBtn">↑</div>
-                <div class="control-btn" id="rightBtn">→</div>
+    <div class="game-container">
+        <div class="game-header">🏙️ 城市跑酷 - City Parkour 🏃</div>
+        
+        <div id="gameCanvas">
+            <div class="info-panel">
+                <div>關卡: <span id="levelDisplay">1</span></div>
+                <div>檢查點: <span id="checkpointDisplay">0</span></div>
             </div>
-            <div id="gameOver">
-                <h2 id="gameOverTitle">遊戲結束</h2>
-                <p>最後得分: <span id="finalScore">0</span></p>
-                <p>通過檢查點: <span id="finalCheckpoints">0</span></p>
-                <button onclick="game.restart()">重新開始</button>
+            <div class="mobile-buttons" id="mobileButtons">
+                <div class="mobile-btn" id="leftBtn">⬅️</div>
+                <div class="mobile-btn" id="jumpBtn">⬆️</div>
+                <div class="mobile-btn" id="rightBtn">➡️</div>
+            </div>
+            <div id="gameOverScreen">
+                <div class="game-over-content">
+                    <h2>遊戲結束!</h2>
+                    <p>最終分數: <span id="finalScore">0</span></p>
+                    <p>通過檢查點: <span id="finalCheckpoints">0</span></p>
+                    <p>最高關卡: <span id="finalLevel">1</span></p>
+                    <button onclick="game.restart()">重新開始</button>
+                </div>
             </div>
         </div>
-        <div class="ui-panel">
-            <div class="ui-item">分數: <span id="score">0</span></div>
-            <div class="ui-item">生命值: <span id="health">3</span></div>
-            <div class="ui-item">關卡: <span id="level">1</span></div>
+
+        <div class="game-stats">
+            <div class="stat-item">
+                <span class="stat-label">💯 分數</span>
+                <span class="stat-value" id="scoreDisplay">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">❤️ 生命</span>
+                <span class="stat-value" id="healthDisplay">3</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">⚡ 速度等級</span>
+                <span class="stat-value" id="speedDisplay">1</span>
+            </div>
         </div>
-        <div class="button-group">
-            <button onclick="game.togglePause()">暫停/繼續</button>
-            <button onclick="toggleMobileControls()">移動控制</button>
-            <button onclick="game.restart()">重新開始</button>
+
+        <div class="game-controls">
+            <button onclick="game.togglePause()">⏸️ 暫停/繼續</button>
+            <button onclick="toggleMobileControls()">📱 移動控制</button>
+            <button onclick="game.restart()">🔄 重新開始</button>
         </div>
     </div>
 
     <script>
-        class Game {
+        class CityParkourGame {
             constructor() {
-                this.canvas = document.getElementById('gameContainer');
-                this.width = this.canvas.offsetWidth;
-                this.height = this.canvas.offsetHeight;
-                this.gravity = 0.6;
+                this.canvas = document.getElementById('gameCanvas');
+                this.canvasWidth = this.canvas.offsetWidth;
+                this.canvasHeight = this.canvas.offsetHeight;
+
+                // 遊戲狀態
                 this.isPaused = false;
+                this.isGameOver = false;
                 this.score = 0;
                 this.health = 3;
                 this.level = 1;
-                this.checkpointsReached = 0;
-                this.gameOverFlag = false;
+                this.checkpointsCollected = 0;
+                this.gameTime = 0;
 
-                // 起始平台位置
-                const startPlatformY = this.height - 100;
+                // 物理引擎
+                this.gravity = 0.5;
+                this.platformSpeed = -4;
 
+                // 玩家對象
                 this.player = {
-                    x: 50,
-                    y: startPlatformY - 40, // 玩家站在起始平台上
-                    width: 30,
-                    height: 40,
-                    velocityY: 0,
+                    x: 80,
+                    y: this.canvasHeight - 150,
+                    width: 25,
+                    height: 35,
                     velocityX: 0,
+                    velocityY: 0,
                     isJumping: false,
                     color: '#FF6B6B'
                 };
 
-                this.keys = {
-                    ArrowLeft: false,
-                    ArrowRight: false,
-                    ArrowUp: false,
-                    'a': false,
-                    'd': false,
-                    'w': false,
-                    ' ': false
-                };
+                // 鍵盤輸入
+                this.keys = {};
 
+                // 遊戲對象
                 this.platforms = [];
                 this.obstacles = [];
                 this.checkpoints = [];
-                this.lastCheckpoint = null;
+                this.particles = [];
+                this.lastCheckpointX = null;
 
-                this.cameraX = 0;
-                this.platformSpeed = -3;
-
-                this.init();
-                this.setupEventListeners();
+                // 初始化
+                this.setupInputListeners();
+                this.generateLevel();
                 this.gameLoop();
             }
 
-            init() {
-                this.generateLevel();
-                this.updateUI();
+            setupInputListeners() {
+                // 鍵盤控制
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key] = true;
+                });
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key] = false;
+                });
+
+                // 觸摸控制
+                const leftBtn = document.getElementById('leftBtn');
+                const rightBtn = document.getElementById('rightBtn');
+                const jumpBtn = document.getElementById('jumpBtn');
+
+                leftBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.keys['ArrowLeft'] = true;
+                });
+                leftBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.keys['ArrowLeft'] = false;
+                });
+
+                rightBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.keys['ArrowRight'] = true;
+                });
+                rightBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.keys['ArrowRight'] = false;
+                });
+
+                jumpBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.keys[' '] = true;
+                });
+                jumpBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.keys[' '] = false;
+                });
+
+                // 滑鼠點擊控制（調試用）
+                leftBtn.addEventListener('mousedown', () => this.keys['ArrowLeft'] = true);
+                leftBtn.addEventListener('mouseup', () => this.keys['ArrowLeft'] = false);
+                rightBtn.addEventListener('mousedown', () => this.keys['ArrowRight'] = true);
+                rightBtn.addEventListener('mouseup', () => this.keys['ArrowRight'] = false);
+                jumpBtn.addEventListener('mousedown', () => this.keys[' '] = true);
+                jumpBtn.addEventListener('mouseup', () => this.keys[' '] = false);
             }
 
             generateLevel() {
@@ -269,143 +362,124 @@
                 this.obstacles = [];
                 this.checkpoints = [];
 
-                // 初始起始平台
-                const startPlatformY = this.height - 100;
+                // 起始平台
                 this.platforms.push({
                     x: 0,
-                    y: startPlatformY,
-                    width: 150,
-                    height: 15,
-                    color: '#4CAF50'
+                    y: this.canvasHeight - 100,
+                    width: 200,
+                    height: 25,
+                    color: '#32CD32'
                 });
 
-                const platformGap = 150;
-                const numPlatforms = Math.ceil(this.width / platformGap) + 10;
+                // 生成關卡內容
+                const platformGap = 120 + this.level * 5;
+                const levelLength = 50 + this.level * 10;
 
-                for (let i = 1; i < numPlatforms; i++) {
-                    const x = 150 + i * platformGap;
-                    const y = Math.random() * (this.height - 250) + 150;
+                for (let i = 1; i < levelLength; i++) {
+                    const x = 200 + i * platformGap;
+                    const y = Math.random() * (this.canvasHeight - 250) + 150;
+
+                    // 平台
                     this.platforms.push({
                         x: x,
                         y: y,
-                        width: 80 + Math.random() * 40,
-                        height: 15,
-                        color: '#4CAF50'
+                        width: 70 + Math.random() * 40,
+                        height: 20,
+                        color: '#32CD32'
                     });
 
-                    // 添加檢查點（每5個平台1個）
-                    if (i > 0 && i % 5 === 0) {
+                    // 檢查點（每4個平台1個）
+                    if (i > 0 && i % 4 === 0) {
                         this.checkpoints.push({
-                            x: x,
-                            y: y - 50,
-                            width: 30,
+                            x: x + 30,
+                            y: y - 60,
+                            width: 25,
                             height: 50,
-                            collected: false
+                            collected: false,
+                            id: i
                         });
                     }
 
-                    // 添加障礙物（從第5個平台開始）
-                    if (i > 4) {
-                        const obstacleType = Math.random();
-                        if (obstacleType < 0.3) {
+                    // 障礙物（從第3個平台開始）
+                    if (i > 2) {
+                        const obstacleChance = Math.random();
+
+                        if (obstacleChance < 0.25) {
                             // 汽車
                             this.obstacles.push({
-                                x: x + Math.random() * 200,
-                                y: y - 60,
-                                width: 50,
-                                height: 25,
                                 type: 'car',
-                                speed: 2 + Math.random() * 2,
-                                color: '#FF0000',
-                                direction: Math.random() > 0.5 ? 1 : -1
+                                x: x + Math.random() * this.canvasWidth,
+                                y: y - 50,
+                                width: 60,
+                                height: 30,
+                                speed: 3 + this.level * 0.5,
+                                direction: Math.random() > 0.5 ? 1 : -1,
+                                color: '#FF0000'
                             });
-                        } else if (obstacleType < 0.6) {
+                        } else if (obstacleChance < 0.5) {
                             // 敵人
                             this.obstacles.push({
-                                x: x + 100,
-                                y: y - 80,
-                                width: 25,
-                                height: 35,
                                 type: 'enemy',
-                                speed: 1 + Math.random() * 1.5,
-                                color: '#9C27B0',
+                                x: x,
+                                y: y - 70,
+                                width: 30,
+                                height: 40,
+                                patrolStart: x,
                                 patrolWidth: 150,
-                                startX: x + 100
+                                speed: 1.5 + this.level * 0.2,
+                                direction: 1,
+                                color: '#9C27B0'
                             });
-                        } else {
+                        } else if (obstacleChance < 0.75) {
                             // 陷阱
                             this.obstacles.push({
-                                x: x + 40,
-                                y: y + 15,
-                                width: 60,
-                                height: 20,
                                 type: 'trap',
+                                x: x + 20,
+                                y: y + 22,
+                                width: 65,
+                                height: 15,
                                 color: '#FFD700'
+                            });
+                        } else {
+                            // 跳刺
+                            this.obstacles.push({
+                                type: 'spike',
+                                x: x + 30,
+                                y: y - 20,
+                                width: 10,
+                                height: 20,
+                                color: '#FF6347'
                             });
                         }
                     }
                 }
+
+                // 重置玩家位置
+                this.resetPlayer();
             }
 
-            setupEventListeners() {
-                document.addEventListener('keydown', (e) => {
-                    if (e.key in this.keys) {
-                        this.keys[e.key] = true;
-                    }
-                    if (e.key === ' ') {
-                        e.preventDefault();
-                        this.keys[' '] = true;
-                    }
-                });
-
-                document.addEventListener('keyup', (e) => {
-                    if (e.key in this.keys) {
-                        this.keys[e.key] = false;
-                    }
-                    if (e.key === ' ') {
-                        this.keys[' '] = false;
-                    }
-                });
-
-                // 移動控制按鈕
-                document.getElementById('leftBtn').addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.keys['ArrowLeft'] = true;
-                });
-                document.getElementById('leftBtn').addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    this.keys['ArrowLeft'] = false;
-                });
-
-                document.getElementById('rightBtn').addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.keys['ArrowRight'] = true;
-                });
-                document.getElementById('rightBtn').addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    this.keys['ArrowRight'] = false;
-                });
-
-                document.getElementById('jumpBtn').addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.keys[' '] = true;
-                });
-                document.getElementById('jumpBtn').addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    this.keys[' '] = false;
-                });
+            resetPlayer() {
+                if (this.lastCheckpointX !== null) {
+                    this.player.x = this.lastCheckpointX;
+                    this.player.y = this.canvasHeight - 150;
+                } else {
+                    this.player.x = 80;
+                    this.player.y = this.canvasHeight - 150;
+                }
+                this.player.velocityY = 0;
+                this.player.velocityX = 0;
             }
 
             update() {
-                if (this.isPaused || this.gameOverFlag) return;
+                if (this.isPaused || this.isGameOver) return;
 
                 // 玩家移動
                 this.player.velocityX = 0;
                 if (this.keys['ArrowLeft'] || this.keys['a']) {
-                    this.player.velocityX = -5;
+                    this.player.velocityX = -6;
                 }
                 if (this.keys['ArrowRight'] || this.keys['d']) {
-                    this.player.velocityX = 5;
+                    this.player.velocityX = 6;
                 }
 
                 this.player.x += this.player.velocityX;
@@ -416,13 +490,13 @@
 
                 // 邊界檢查
                 if (this.player.x < 0) this.player.x = 0;
-                if (this.player.x + this.player.width > this.width) {
-                    this.player.x = this.width - this.player.width;
+                if (this.player.x + this.player.width > this.canvasWidth) {
+                    this.player.x = this.canvasWidth - this.player.width;
                 }
 
-                // 檢查平台碰撞
-                let onGround = false;
-                this.platforms.forEach(platform => {
+                // 平台碰撞
+                let isOnGround = false;
+                for (let platform of this.platforms) {
                     if (
                         this.player.velocityY >= 0 &&
                         this.player.y + this.player.height >= platform.y &&
@@ -433,74 +507,78 @@
                         this.player.y = platform.y - this.player.height;
                         this.player.velocityY = 0;
                         this.player.isJumping = false;
-                        onGround = true;
+                        isOnGround = true;
                     }
-                });
+                }
 
                 // 跳躍
-                if ((this.keys[' '] || this.keys['w'] || this.keys['ArrowUp']) && !this.player.isJumping && onGround) {
+                if ((this.keys[' '] || this.keys['w'] || this.keys['ArrowUp']) && !this.player.isJumping && isOnGround) {
                     this.player.velocityY = -12;
                     this.player.isJumping = true;
                 }
 
-                // 檢查障礙物碰撞
-                this.obstacles.forEach(obstacle => {
-                    if (this.checkCollision(this.player, obstacle)) {
-                        this.takeDamage();
-                        this.resetPlayerPosition();
+                // 檢查點碰撞
+                for (let checkpoint of this.checkpoints) {
+                    if (!checkpoint.collected && this.checkCollision(this.player, checkpoint)) {
+                        checkpoint.collected = true;
+                        this.checkpointsCollected++;
+                        this.score += 100;
+                        this.lastCheckpointX = checkpoint.x;
+                        this.createParticles(checkpoint.x, checkpoint.y, '🚩');
                     }
+                }
 
+                // 障礙物更新和碰撞
+                for (let obstacle of this.obstacles) {
                     // 更新障礙物位置
                     if (obstacle.type === 'car') {
                         obstacle.x += obstacle.speed * obstacle.direction;
-                        if (obstacle.x > this.width + 50) obstacle.x = -50;
-                        if (obstacle.x < -50) obstacle.x = this.width + 50;
+                        if (obstacle.x > this.canvasWidth + 50) obstacle.x = -60;
+                        if (obstacle.x < -60) obstacle.x = this.canvasWidth + 50;
                     } else if (obstacle.type === 'enemy') {
-                        obstacle.x += obstacle.speed;
-                        if (obstacle.x - obstacle.startX > obstacle.patrolWidth) {
-                            obstacle.speed = -obstacle.speed;
+                        obstacle.x += obstacle.speed * obstacle.direction;
+                        if (obstacle.x - obstacle.patrolStart > obstacle.patrolWidth) {
+                            obstacle.direction = -1;
                         }
-                        if (obstacle.x - obstacle.startX < 0) {
-                            obstacle.speed = -obstacle.speed;
+                        if (obstacle.x - obstacle.patrolStart < 0) {
+                            obstacle.direction = 1;
                         }
                     }
-                });
 
-                // 檢查檢查點
-                this.checkpoints.forEach(checkpoint => {
-                    if (!checkpoint.collected && this.checkCollision(this.player, checkpoint)) {
-                        checkpoint.collected = true;
-                        this.checkpointsReached++;
-                        this.score += 100;
-                        this.lastCheckpoint = {
-                            x: checkpoint.x,
-                            y: checkpoint.y
-                        };
-                        this.updateUI();
+                    // 碰撞檢測
+                    if (this.checkCollision(this.player, obstacle)) {
+                        this.takeDamage();
                     }
-                });
-
-                // 掉出屏幕
-                if (this.player.y > this.height) {
-                    this.takeDamage();
-                    this.resetPlayerPosition();
                 }
 
-                // 更新相機
-                this.cameraX = this.player.x - 100;
-                if (this.cameraX < 0) this.cameraX = 0;
+                // 掉出屏幕
+                if (this.player.y > this.canvasHeight) {
+                    this.takeDamage();
+                }
 
                 // 增加得分
-                this.score += 0.1;
+                this.score += 0.05;
+                this.gameTime++;
 
-                // 關卡提升
-                if (this.checkpointsReached > 0 && this.checkpointsReached % 3 === 0) {
-                    this.level = Math.floor(this.checkpointsReached / 3) + 1;
+                // 等級提升
+                if (this.checkpointsCollected > 0 && this.checkpointsCollected % 5 === 0) {
+                    this.level = Math.floor(this.checkpointsCollected / 5) + 1;
+                }
+
+                // 更新粒子
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    this.particles[i].life--;
+                    this.particles[i].x += this.particles[i].vx;
+                    this.particles[i].y += this.particles[i].vy;
+                    this.particles[i].vy += 0.3;
+                    if (this.particles[i].life <= 0) {
+                        this.particles.splice(i, 1);
+                    }
                 }
 
                 this.updateUI();
 
-                // 檢查遊戲結束
+                // 遊戲結束檢查
                 if (this.health <= 0) {
                     this.gameOver();
                 }
@@ -517,65 +595,68 @@
 
             takeDamage() {
                 this.health--;
-                this.score = Math.max(0, this.score - 50);
+                this.score = Math.max(0, this.score - 30);
+                this.createParticles(this.player.x, this.player.y, '💥');
+                this.resetPlayer();
             }
 
-            resetPlayerPosition() {
-                if (this.lastCheckpoint) {
-                    this.player.x = this.lastCheckpoint.x;
-                    this.player.y = this.lastCheckpoint.y - 100;
-                } else {
-                    // 回到起始位置
-                    const startPlatformY = this.height - 100;
-                    this.player.x = 50;
-                    this.player.y = startPlatformY - 40;
+            createParticles(x, y, emoji) {
+                for (let i = 0; i < 5; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: (Math.random() - 0.5) * 4,
+                        life: 30,
+                        emoji: emoji
+                    });
                 }
-                this.player.velocityY = 0;
-                this.player.velocityX = 0;
             }
 
             draw() {
-                // 繪製平台
-                this.platforms.forEach(platform => {
-                    this.drawRect(platform.x - this.cameraX, platform.y, platform.width, platform.height, platform.color);
-                });
+                const canvas = document.getElementById('gameCanvas');
+                
+                // 清空舊的繪製物體
+                const drawn = canvas.querySelectorAll('.game-object');
+                drawn.forEach(obj => obj.remove());
 
-                // 繪製障礙物
-                this.obstacles.forEach(obstacle => {
-                    if (obstacle.type === 'car') {
-                        this.drawCar(obstacle.x - this.cameraX, obstacle.y, obstacle.width, obstacle.height, obstacle.color);
-                    } else if (obstacle.type === 'enemy') {
-                        this.drawEnemy(obstacle.x - this.cameraX, obstacle.y, obstacle.width, obstacle.height, obstacle.color);
-                    } else if (obstacle.type === 'trap') {
-                        this.drawTrap(obstacle.x - this.cameraX, obstacle.y, obstacle.width, obstacle.height, obstacle.color);
-                    }
-                });
+                // 繪製平台
+                for (let platform of this.platforms) {
+                    this.drawRect(platform.x, platform.y, platform.width, platform.height, platform.color, 'platform');
+                }
 
                 // 繪製檢查點
-                this.checkpoints.forEach(checkpoint => {
+                for (let checkpoint of this.checkpoints) {
                     if (!checkpoint.collected) {
-                        this.drawFlag(checkpoint.x - this.cameraX, checkpoint.y, checkpoint.collected);
+                        this.drawObject(checkpoint.x, checkpoint.y, '🚩', 'checkpoint');
                     }
-                });
+                }
+
+                // 繪製障礙物
+                for (let obstacle of this.obstacles) {
+                    if (obstacle.type === 'car') {
+                        this.drawObject(obstacle.x, obstacle.y, '🚗', 'obstacle');
+                    } else if (obstacle.type === 'enemy') {
+                        this.drawObject(obstacle.x, obstacle.y, '👾', 'obstacle');
+                    } else if (obstacle.type === 'trap') {
+                        this.drawObject(obstacle.x, obstacle.y, '⚠️', 'obstacle');
+                    } else if (obstacle.type === 'spike') {
+                        this.drawObject(obstacle.x, obstacle.y, '⚡', 'obstacle');
+                    }
+                }
+
+                // 繪製粒子
+                for (let particle of this.particles) {
+                    this.drawObject(particle.x, particle.y, particle.emoji, 'particle', particle.life / 30);
+                }
 
                 // 繪製玩家
-                this.drawRect(this.player.x - this.cameraX, this.player.y, this.player.width, this.player.height, this.player.color);
+                this.drawObject(this.player.x, this.player.y, '🏃', 'player');
             }
 
-            drawRect(x, y, width, height, color) {
+            drawRect(x, y, width, height, color, className = '') {
                 const div = document.createElement('div');
-                div.style.position = 'absolute';
-                div.style.left = x + 'px';
-                div.style.top = y + 'px';
-                div.style.width = width + 'px';
-                div.style.height = height + 'px';
-                div.style.backgroundColor = color;
-                div.style.border = '2px solid #000';
-                this.canvas.appendChild(div);
-            }
-
-            drawCar(x, y, width, height, color) {
-                const div = document.createElement('div');
+                div.className = 'game-object ' + className;
                 div.style.position = 'absolute';
                 div.style.left = x + 'px';
                 div.style.top = y + 'px';
@@ -584,70 +665,32 @@
                 div.style.backgroundColor = color;
                 div.style.border = '2px solid #000';
                 div.style.borderRadius = '3px';
-                div.textContent = '🚗';
-                div.style.fontSize = '20px';
-                div.style.display = 'flex';
-                div.style.alignItems = 'center';
-                div.style.justifyContent = 'center';
-                this.canvas.appendChild(div);
+                document.getElementById('gameCanvas').appendChild(div);
             }
 
-            drawEnemy(x, y, width, height, color) {
+            drawObject(x, y, emoji, className = '', opacity = 1) {
                 const div = document.createElement('div');
+                div.className = 'game-object ' + className;
                 div.style.position = 'absolute';
                 div.style.left = x + 'px';
                 div.style.top = y + 'px';
-                div.style.width = width + 'px';
-                div.style.height = height + 'px';
-                div.style.backgroundColor = color;
-                div.style.border = '2px solid #000';
-                div.style.borderRadius = '5px';
-                div.textContent = '👾';
-                div.style.fontSize = '24px';
-                div.style.display = 'flex';
-                div.style.alignItems = 'center';
-                div.style.justifyContent = 'center';
-                this.canvas.appendChild(div);
-            }
-
-            drawTrap(x, y, width, height, color) {
-                const div = document.createElement('div');
-                div.style.position = 'absolute';
-                div.style.left = x + 'px';
-                div.style.top = y + 'px';
-                div.style.width = width + 'px';
-                div.style.height = height + 'px';
-                div.style.backgroundColor = color;
-                div.style.border = '2px dashed #000';
-                div.textContent = '⚠️';
-                div.style.fontSize = '18px';
-                div.style.display = 'flex';
-                div.style.alignItems = 'center';
-                div.style.justifyContent = 'center';
-                this.canvas.appendChild(div);
-            }
-
-            drawFlag(x, y, collected) {
-                const div = document.createElement('div');
-                div.style.position = 'absolute';
-                div.style.left = x + 'px';
-                div.style.top = y + 'px';
-                div.style.width = '30px';
-                div.style.height = '50px';
-                div.textContent = collected ? '🚩' : '🚩';
                 div.style.fontSize = '30px';
+                div.style.width = '30px';
+                div.style.height = '30px';
                 div.style.display = 'flex';
                 div.style.alignItems = 'center';
                 div.style.justifyContent = 'center';
-                div.style.filter = collected ? 'grayscale(100%)' : '';
-                this.canvas.appendChild(div);
+                div.style.opacity = opacity;
+                div.textContent = emoji;
+                document.getElementById('gameCanvas').appendChild(div);
             }
 
             updateUI() {
-                document.getElementById('score').textContent = Math.floor(this.score);
-                document.getElementById('health').textContent = this.health;
-                document.getElementById('level').textContent = this.level;
-                document.getElementById('checkpointCount').textContent = this.checkpointsReached;
+                document.getElementById('scoreDisplay').textContent = Math.floor(this.score);
+                document.getElementById('healthDisplay').textContent = this.health;
+                document.getElementById('levelDisplay').textContent = this.level;
+                document.getElementById('checkpointDisplay').textContent = this.checkpointsCollected;
+                document.getElementById('speedDisplay').textContent = this.level;
             }
 
             togglePause() {
@@ -655,60 +698,46 @@
             }
 
             gameOver() {
-                this.gameOverFlag = true;
-                document.getElementById('gameOver').style.display = 'block';
+                this.isGameOver = true;
+                document.getElementById('gameOverScreen').classList.add('show');
                 document.getElementById('finalScore').textContent = Math.floor(this.score);
-                document.getElementById('finalCheckpoints').textContent = this.checkpointsReached;
+                document.getElementById('finalCheckpoints').textContent = this.checkpointsCollected;
+                document.getElementById('finalLevel').textContent = this.level;
             }
 
             restart() {
                 this.score = 0;
                 this.health = 3;
                 this.level = 1;
-                this.checkpointsReached = 0;
-                this.gameOverFlag = false;
-                this.lastCheckpoint = null;
-                const startPlatformY = this.height - 100;
-                this.player.x = 50;
-                this.player.y = startPlatformY - 40;
-                this.player.velocityY = 0;
-                this.player.velocityX = 0;
-                document.getElementById('gameOver').style.display = 'none';
+                this.checkpointsCollected = 0;
+                this.gameTime = 0;
+                this.isGameOver = false;
+                this.lastCheckpointX = null;
+                document.getElementById('gameOverScreen').classList.remove('show');
                 this.generateLevel();
                 this.updateUI();
             }
 
-            gameLoop() {
-                // 清空遊戲容器中的繪製元素
-                const gameContainer = document.getElementById('gameContainer');
-                const children = gameContainer.querySelectorAll('div[style*="position: absolute"]');
-                children.forEach(child => {
-                    if (child.id !== 'gameOver' && child.id !== 'mobileControls' && !child.classList.contains('checkpoint-indicator')) {
-                        child.remove();
-                    }
-                });
-
+            gameLoop = () => {
                 this.update();
                 this.draw();
-
-                requestAnimationFrame(() => this.gameLoop());
-            }
+                requestAnimationFrame(this.gameLoop);
+            };
         }
 
         let game;
-
         window.addEventListener('load', () => {
-            game = new Game();
+            game = new CityParkourGame();
             
-            // 檢測是否是移動設備
+            // 檢測移動設備
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if (isMobile) {
-                document.getElementById('mobileControls').classList.add('visible');
+                document.getElementById('mobileButtons').classList.add('show');
             }
         });
 
         function toggleMobileControls() {
-            document.getElementById('mobileControls').classList.toggle('visible');
+            document.getElementById('mobileButtons').classList.toggle('show');
         }
     </script>
 </body>
