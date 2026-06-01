@@ -59,6 +59,7 @@
             display: flex;
             gap: 10px;
             margin-top: 10px;
+            padding: 10px;
         }
 
         button {
@@ -221,9 +222,12 @@
                 this.checkpointsReached = 0;
                 this.gameOverFlag = false;
 
+                // 起始平台位置
+                const startPlatformY = this.height - 100;
+
                 this.player = {
                     x: 50,
-                    y: this.height - 150,
+                    y: startPlatformY - 40, // 玩家站在起始平台上
                     width: 30,
                     height: 40,
                     velocityY: 0,
@@ -265,12 +269,22 @@
                 this.obstacles = [];
                 this.checkpoints = [];
 
-                const platformGap = 150;
-                const numPlatforms = Math.ceil(this.width / platformGap) + 5;
+                // 初始起始平台
+                const startPlatformY = this.height - 100;
+                this.platforms.push({
+                    x: 0,
+                    y: startPlatformY,
+                    width: 150,
+                    height: 15,
+                    color: '#4CAF50'
+                });
 
-                for (let i = 0; i < numPlatforms; i++) {
-                    const x = i * platformGap;
-                    const y = Math.random() * (this.height - 200) + 100;
+                const platformGap = 150;
+                const numPlatforms = Math.ceil(this.width / platformGap) + 10;
+
+                for (let i = 1; i < numPlatforms; i++) {
+                    const x = 150 + i * platformGap;
+                    const y = Math.random() * (this.height - 250) + 150;
                     this.platforms.push({
                         x: x,
                         y: y,
@@ -290,8 +304,8 @@
                         });
                     }
 
-                    // 添加障礙物
-                    if (i > 2) {
+                    // 添加障礙物（從第5個平台開始）
+                    if (i > 4) {
                         const obstacleType = Math.random();
                         if (obstacleType < 0.3) {
                             // 汽車
@@ -331,15 +345,6 @@
                         }
                     }
                 }
-
-                // 初始起始平台
-                this.platforms.unshift({
-                    x: -100,
-                    y: this.height - 100,
-                    width: 120,
-                    height: 15,
-                    color: '#4CAF50'
-                });
             }
 
             setupEventListeners() {
@@ -520,16 +525,16 @@
                     this.player.x = this.lastCheckpoint.x;
                     this.player.y = this.lastCheckpoint.y - 100;
                 } else {
+                    // 回到起始位置
+                    const startPlatformY = this.height - 100;
                     this.player.x = 50;
-                    this.player.y = this.height - 150;
+                    this.player.y = startPlatformY - 40;
                 }
                 this.player.velocityY = 0;
                 this.player.velocityX = 0;
             }
 
             draw() {
-                // 清空背景（已通過CSS處理）
-                
                 // 繪製平台
                 this.platforms.forEach(platform => {
                     this.drawRect(platform.x - this.cameraX, platform.y, platform.width, platform.height, platform.color);
@@ -663,8 +668,9 @@
                 this.checkpointsReached = 0;
                 this.gameOverFlag = false;
                 this.lastCheckpoint = null;
+                const startPlatformY = this.height - 100;
                 this.player.x = 50;
-                this.player.y = this.height - 150;
+                this.player.y = startPlatformY - 40;
                 this.player.velocityY = 0;
                 this.player.velocityX = 0;
                 document.getElementById('gameOver').style.display = 'none';
